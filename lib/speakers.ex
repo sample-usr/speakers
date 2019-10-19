@@ -1,4 +1,10 @@
 defmodule Speakers do
+  @moduledoc """
+  Handles playing of remote audio streams through speakers.
+
+  Whichever device is set as the default output, is selected for audio.
+  """
+
   alias Speakers.Player
 
   defdelegate add_to_queue(url), to: Player

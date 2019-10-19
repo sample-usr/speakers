@@ -1,4 +1,6 @@
 defmodule Speakers.NifAudio do
+  @moduledoc false
+
   use Rustler, otp_app: :speakers, crate: :speakers_nifaudio
 
   def add_to_queue(_audio_url), do: :erlang.nif_error(:nif_not_loaded)
