@@ -11,11 +11,9 @@ defmodule Speakers.PlayerValidator do
     end
   end
 
-  def is_valid_volume(volume) do
-    new_volume = volume >= 0.0 && volume <= 1.0
-    case new_volume do
-      false -> {:error, false}
-      true -> {:ok, new_volume}
-    end
+  def is_valid_volume?(volume) when (volume >= 0.0) and (volume) <= 1.0 do
+    true
   end
+
+  def is_valid_volume?(_), do: false
 end

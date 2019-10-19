@@ -33,10 +33,10 @@ defmodule Speakers.Player do
   end
 
   @spec set_volume(float()) :: {:ok, float()} | {:error, String.t()}
-  def set_volume(new_volume) do
-    case PlayerValidator.is_valid_volume(new_volume) do
-      {:ok, volume} -> NifAudio.set_volume(volume)
-      {:error, _} -> {:error, "volume must be between 0.0 and 1.0"}
+  def set_volume(volume) do
+    case PlayerValidator.is_valid_volume?(volume) do
+      true -> NifAudio.set_volume(volume)
+      false -> {:error, "volume must be between 0.0 and 1.0"}
     end
   end
 end
