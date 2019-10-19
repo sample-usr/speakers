@@ -2,10 +2,15 @@ defmodule Speakers.Player do
   @moduledoc false
 
   alias Speakers.NifAudio
+  alias Speakers.PlayerValidator
 
   @spec add_to_queue(String.t()) :: :ok | :error
   def add_to_queue(url) do
-    NifAudio.add_to_queue(url)
+    with {:ok, url} <- PlayerValidator.is_valid_uri(url) do
+      NifAudio.add_to_queue(url)
+    else
+      {:error, _} -> {:error, "not a valid audio URL"}
+    end
   end
 
   @spec pause :: :ok | :error
