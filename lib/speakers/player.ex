@@ -4,7 +4,7 @@ defmodule Speakers.Player do
   alias Speakers.NifAudio
   alias Speakers.PlayerValidator
 
-  @spec add_to_queue(String.t()) :: :ok | :error
+  @spec add_to_queue(String.t()) :: :ok | {:error, String.t()}
   def add_to_queue(url) do
     with {:ok, url} <- PlayerValidator.is_valid_uri(url) do
       NifAudio.add_to_queue(url)
@@ -33,8 +33,12 @@ defmodule Speakers.Player do
     NifAudio.get_volume()
   end
 
-  @spec set_volume(float()) :: {:ok, float()} | :error
+  @spec set_volume(float()) :: {:ok, float()} | {:error, String.t()}
   def set_volume(new_volume) do
-    NifAudio.set_volume(new_volume)
+    with {:ok, volume} <- PlayerValidator.is_valid_volume(new_volume) do
+      NifAudio.set_volume(volume)
+    else
+      {:error, _} -> {:error, "volume must be between 0.0 and 1.0"}
+    end
   end
 end
