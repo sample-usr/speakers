@@ -36,12 +36,12 @@ lazy_static! {
 
 fn pause<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     CURRENT_SINK.pause();
-    Ok((atoms::ok).encode(env))
+    Ok((atoms::ok()).encode(env))
 }
 
 fn resume<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     CURRENT_SINK.play();
-    Ok((atoms::ok).encode(env))
+    Ok((atoms::ok()).encode(env))
 }
 
 fn get_queue_len<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
