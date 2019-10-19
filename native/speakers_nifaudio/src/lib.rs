@@ -36,17 +36,17 @@ lazy_static! {
 
 fn pause<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     CURRENT_SINK.pause();
-    Ok(format!("Player::Paused").encode(env))
+    Ok((atoms::ok).encode(env))
 }
 
 fn resume<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     CURRENT_SINK.play();
-    Ok(format!("Player::Resumed").encode(env))
+    Ok((atoms::ok).encode(env))
 }
 
 fn get_queue_len<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     let queue_len = CURRENT_SINK.len();
-    Ok((queue_len).encode(env))
+    Ok((atoms::ok(), queue_len).encode(env))
 }
 
 fn add_to_queue<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
@@ -58,16 +58,16 @@ fn add_to_queue<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> 
 
     CURRENT_SINK.append(rodio::Decoder::new(Cursor::new(audio_buffer)).unwrap());
 
-    Ok(format!("Player::Added_To_Queue").encode(env))
+    Ok((atoms::ok()).encode(env))
 }
 
 fn get_volume<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     let current_volume = CURRENT_SINK.volume();
-    Ok((current_volume).encode(env))
+    Ok((atoms::ok(), current_volume).encode(env))
 }
 
 fn set_volume<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
     let new_volume: f32 = args[0].decode()?;
     let new_set_volume = CURRENT_SINK.set_volume(new_volume);
-    Ok((new_set_volume).encode(env))
+    Ok((atoms::ok(), new_set_volume).encode(env))
 }
