@@ -6,9 +6,8 @@ defmodule Speakers.Player do
 
   @spec add_to_queue(String.t()) :: :ok | {:error, String.t()}
   def add_to_queue(url) do
-    with {:ok, url} <- PlayerValidator.is_valid_uri(url) do
-      NifAudio.add_to_queue(url)
-    else
+    case PlayerValidator.is_valid_uri(url) do
+      {:ok, url} -> NifAudio.add_to_queue(url)
       {:error, _} -> {:error, "not a valid audio URL"}
     end
   end
@@ -34,11 +33,10 @@ defmodule Speakers.Player do
   end
 
   @spec set_volume(float()) :: {:ok, float()} | {:error, String.t()}
-  def set_volume(new_volume) do
-    with {:ok, volume} <- PlayerValidator.is_valid_volume(new_volume) do
-      NifAudio.set_volume(volume)
-    else
-      {:error, _} -> {:error, "volume must be between 0.0 and 1.0"}
+  def set_volume(volume) do
+    case PlayerValidator.is_valid_volume?(volume) do
+      true -> NifAudio.set_volume(volume)
+      false -> {:error, "volume must be between 0.0 and 1.0"}
     end
   end
 end
