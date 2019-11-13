@@ -1,6 +1,6 @@
 defmodule Speakers do
   @moduledoc """
-  Handles playing of remote audio streams through speakers.
+  Handles playing of audio files through speakers. (mp3, wav, ogg and flac are supported)
 
   Whichever device is set as the default output, is selected for audio.
   """
@@ -8,21 +8,21 @@ defmodule Speakers do
   alias Speakers.Player
 
   @doc """
-  Adds an audio stream URL to the queue. If the queue is empty it'll play it immediately
+  Adds an audio file to the queue. If the queue is empty it'll play it immediately
 
   ## Parameters
 
-    - url: String that represents the URL of the audio stream
+    - file_path: String that represents the absolute path of the file
 
   ## Examples
 
-      iex> Speakers.add_to_queue("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3")
+      iex> Speakers.add_to_queue("/Users/test/Download/audio.mp3")
       {:ok}
   """
-  defdelegate add_to_queue(url), to: Player
+  defdelegate add_to_queue(file_path), to: Player
 
   @doc """
-  Pauses the currently playing audio stream
+  Pauses the currently playing audio file
 
   ## Examples
 
@@ -32,7 +32,7 @@ defmodule Speakers do
   defdelegate pause, to: Player
 
   @doc """
-  Resumes the currently playing audio stream
+  Resumes the currently playing audio file
 
   ## Examples
 
@@ -42,7 +42,7 @@ defmodule Speakers do
   defdelegate resume, to: Player
 
   @doc """
-  Returns the number of audio streams in the queue
+  Returns the number of audio files in the queue
 
   ## Examples
 

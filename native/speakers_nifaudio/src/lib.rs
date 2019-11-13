@@ -2,7 +2,8 @@
 extern crate lazy_static;
 
 use rustler::{Encoder, Env, Error, Term};
-use std::io::Cursor;
+use std::io::BufReader;
+use std::fs::File;
 
 mod atoms {
     rustler::rustler_atoms! {
@@ -50,13 +51,10 @@ fn get_queue_len<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error
 }
 
 fn add_to_queue<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
-    let audio_url: &str = args[0].decode()?;
+    let file_path: &str = args[0].decode()?;
+    let audio_file = File::open(file_path).unwrap();
 
-    let mut audio_stream = reqwest::get(audio_url).expect("Failed to get audio stream");
-    let mut audio_buffer = vec![];
-    audio_stream.copy_to(&mut audio_buffer).expect("Failed to copy stream to audio buffer");
-
-    CURRENT_SINK.append(rodio::Decoder::new(Cursor::new(audio_buffer)).unwrap());
+    CURRENT_SINK.append(rodio::Decoder::new(BufReader::new(audio_file)).unwrap());
 
     Ok((atoms::ok()).encode(env))
 }
