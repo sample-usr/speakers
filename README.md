@@ -1,8 +1,8 @@
 # Speakers
-This library let's you play remote audio streams through the speakers (default output device). It also gives you the ability handle the stream like a media player.
+This library let's you play audio files through the speakers (default output device). It also gives you the ability handle the file like a media player.
 
 ```
-iex> Speakers.add_to_queue("http://somedomain.com/somefile.mp3")
+iex> Speakers.add_to_queue("/Users/test/Downloads/audio.mp3")
 ```
 It uses `rust` via a NIF under the hood and is essentially a wrapper over the excellent library [rodio](https://github.com/RustAudio/rodio)
 
