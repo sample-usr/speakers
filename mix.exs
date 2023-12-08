@@ -7,15 +7,8 @@ defmodule Speakers.MixProject do
       version: "0.1.0",
       elixir: "~> 1.9",
       start_permanent: Mix.env() == :prod,
-      compilers: [:rustler] ++ Mix.compilers(),
       description: description(),
       package: package(),
-      rustler_crates: [
-        speakers_nifaudio: [
-          path: "native/speakers_nifaudio",
-          mode: if(Mix.env() == :prod, do: :release, else: :debug)
-        ]
-      ],
       deps: deps()
     ]
   end
@@ -30,7 +23,7 @@ defmodule Speakers.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:rustler, "~> 0.21.0"},
+      {:rustler, "~> 0.30.0"},
       {:ex_doc, "~> 0.21.2", only: :dev, runtime: false}
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}

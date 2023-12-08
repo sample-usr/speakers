@@ -1,71 +1,72 @@
 #[macro_use]
 extern crate lazy_static;
 
-use rustler::{Encoder, Env, Error, Term};
-use std::io::BufReader;
 use std::fs::File;
+use std::io::BufReader;
 
 mod atoms {
-    rustler::rustler_atoms! {
-        atom ok;
+    rustler::atoms! {
+        ok,
         //atom error;
         //atom __true__ = "true";
         //atom __false__ = "false";
     }
 }
 
-rustler::rustler_export_nifs! {
+rustler::init!(
     "Elixir.Speakers.NifAudio",
     [
-        ("add_to_queue", 1, add_to_queue),
-        ("pause", 0, pause),
-        ("resume", 0, resume),
-        ("get_queue_len", 0, get_queue_len),
-        ("get_volume", 0, get_volume),
-        ("set_volume", 1, set_volume)
-    ],
-    None
-}
+        add_to_queue,
+        pause,
+        resume,
+        get_queue_len,
+        get_volume,
+        set_volume
+    ]
+);
 
 lazy_static! {
     static ref CURRENT_SINK: rodio::Sink = {
         let device = rodio::default_output_device().unwrap();
-        let sink = rodio::Sink::new(&device);
-        sink
+
+        rodio::Sink::new(&device)
     };
 }
 
-fn pause<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+#[rustler::nif]
+fn pause()  -> rustler::Atom {
     CURRENT_SINK.pause();
-    Ok((atoms::ok()).encode(env))
+    atoms::ok()
 }
 
-fn resume<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+#[rustler::nif]
+fn resume() -> rustler::Atom {
     CURRENT_SINK.play();
-    Ok((atoms::ok()).encode(env))
+    atoms::ok()
 }
 
-fn get_queue_len<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
-    let queue_len = CURRENT_SINK.len();
-    Ok((atoms::ok(), queue_len).encode(env))
+#[rustler::nif]
+fn get_queue_len() -> (rustler::Atom, usize) {
+    (atoms::ok(), CURRENT_SINK.len())
 }
 
-fn add_to_queue<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
-    let file_path: &str = args[0].decode()?;
+#[rustler::nif]
+fn add_to_queue(file_path: &str) -> rustler::Atom {
     let audio_file = File::open(file_path).unwrap();
 
     CURRENT_SINK.append(rodio::Decoder::new(BufReader::new(audio_file)).unwrap());
 
-    Ok((atoms::ok()).encode(env))
+    atoms::ok()
 }
 
-fn get_volume<'a>(env: Env<'a>, _args: &[Term<'a>]) -> Result<Term<'a>, Error> {
+#[rustler::nif]
+fn get_volume() -> (rustler::Atom, f32) {
     let current_volume = CURRENT_SINK.volume();
-    Ok((atoms::ok(), current_volume).encode(env))
+    (atoms::ok(), current_volume)
 }
 
-fn set_volume<'a>(env: Env<'a>, args: &[Term<'a>]) -> Result<Term<'a>, Error> {
-    let new_volume: f32 = args[0].decode()?;
-    let new_set_volume = CURRENT_SINK.set_volume(new_volume);
-    Ok((atoms::ok(), new_set_volume).encode(env))
+#[rustler::nif]
+fn set_volume(new_volume: f32) -> (rustler::Atom, f32) {
+    CURRENT_SINK.set_volume(new_volume);
+    (atoms::ok(), new_volume)
 }
